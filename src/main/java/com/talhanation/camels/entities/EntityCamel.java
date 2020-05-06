@@ -115,7 +115,7 @@ public class EntityCamel extends AbstractChestedHorseEntity {
         this.dataManager.register(DATA_VARIANT_ID, 0);
     }
 
-    private int getVariant() {
+    public int getVariant() {
         return MathHelper.clamp(this.dataManager.get(DATA_VARIANT_ID), 0, 3);
     }
 

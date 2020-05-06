@@ -11,7 +11,11 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 
 public class RenderEntityCamel extends MobRenderer<EntityCamel, ModelEntityCamel<EntityCamel>> {
-    protected static final ResourceLocation TEXTURE = new ResourceLocation(Main.MOD_ID,"textures/entity/camel_entity.png");
+    protected static final ResourceLocation[] TEXTURE = new ResourceLocation[]{
+            new ResourceLocation(Main.MOD_ID,"textures/entity/camel_entity_0.png"),
+            new ResourceLocation(Main.MOD_ID,"textures/entity/camel_entity_1.png"),
+            new ResourceLocation(Main.MOD_ID,"textures/entity/camel_entity_2.png"),
+            new ResourceLocation(Main.MOD_ID,"textures/entity/camel_entity_3.png")};
 
     public RenderEntityCamel(EntityRendererManager rendererManagerIn){
         super(rendererManagerIn, new ModelEntityCamel<EntityCamel>(), 0.85F);
@@ -23,8 +27,7 @@ public class RenderEntityCamel extends MobRenderer<EntityCamel, ModelEntityCamel
         super.preRenderCallback(entity, matrix, a);
     }
 
-
     public ResourceLocation getEntityTexture(EntityCamel entity) {
-        return TEXTURE;
+        return TEXTURE [entity.getVariant()];
     }
 }
