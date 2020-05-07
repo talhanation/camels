@@ -20,6 +20,8 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.horse.AbstractChestedHorseEntity;
+import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.DyeColor;
@@ -39,12 +41,12 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
-public class EntityCamel extends AbstractChestedHorseEntity {
+public class EntityCamel extends LlamaEntity {
     private static final DataParameter<Integer> DATA_STRENGTH_ID;
     private static final DataParameter<Integer> DATA_COLOR_ID;
     private static final DataParameter<Integer> DATA_VARIANT_ID;
-    public int tailCounter;
-    public int eatingCounter;
+    private int tailCounter;
+    private int eatingCounter;
 
     @Nullable
     private EntityCamel caravanHead;
@@ -65,7 +67,7 @@ public class EntityCamel extends AbstractChestedHorseEntity {
         this.setStrength(3 + this.rand.nextInt(x));
     }
 
-    private int getStrength() {
+    public int getStrength() {
         return this.dataManager.get(DATA_STRENGTH_ID);
     }
 
@@ -105,7 +107,8 @@ public class EntityCamel extends AbstractChestedHorseEntity {
     protected void registerAttributes() {
         super.registerAttributes();
         this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(40.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.1F);
+        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.15F);
+        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(55.0D);
     }
 
     protected void registerData() {
@@ -119,7 +122,7 @@ public class EntityCamel extends AbstractChestedHorseEntity {
         return MathHelper.clamp(this.dataManager.get(DATA_VARIANT_ID), 0, 3);
     }
 
-    private void setVariant(int variant) {
+    public void setVariant(int variant) {
         this.dataManager.set(DATA_VARIANT_ID, variant);
     }
 
@@ -137,7 +140,7 @@ public class EntityCamel extends AbstractChestedHorseEntity {
     }
 
     public double getMountedYOffset() {
-        return (double)this.getHeight() * 0.87D;
+        return (double)this.getHeight() * 0.78D;
     }
 
     public boolean canBeSteered() {
@@ -308,15 +311,28 @@ public class EntityCamel extends AbstractChestedHorseEntity {
     public boolean canMateWith(AnimalEntity animal) {
         return animal != this && animal instanceof EntityCamel && this.canMate() && ((EntityCamel)animal).canMate();
     }
+
     @Override
-    public AgeableEntity createChild(AgeableEntity ageable) {
-        EntityCamel entity = new EntityCamel(ModEntityTypes.CAMEL_ENTITY.get(), this.world);
-        entity.onInitialSpawn(this.world, this.world.getDifficultyForLocation(new BlockPos(entity)),
-                SpawnReason.BREEDING, (ILivingEntityData) null, (CompoundNBT) null);
+    public EntityCamel createChild(AgeableEntity ageable) {
+        EntityCamel entity = this.createChild();
+        this.setOffspringAttributes(ageable, entity);
+        EntityCamel entity1 = (EntityCamel)ageable;
+        int i = this.rand.nextInt(Math.max(this.getStrength(), entity1.getStrength())) + 1;
+        if (this.rand.nextFloat() < 0.03F) {
+            ++i;
+        }
+
+        entity.setStrength(i);
+        entity.setVariant(this.rand.nextBoolean() ? this.getVariant() : entity1.getVariant());
         return entity;
     }
 
-
+    protected EntityCamel createChild() {
+        EntityCamel entity = new EntityCamel(ModEntityTypes.CAMEL_ENTITY.get(), this.world);
+            entity.onInitialSpawn(this.world, this.world.getDifficultyForLocation(new BlockPos(entity)),
+                    SpawnReason.BREEDING, (ILivingEntityData) null, (CompoundNBT) null);
+             return entity;
+    }
 
     public boolean onLivingFall(float x, float y) {
         int z = this.func_225508_e_(x, y);
@@ -444,7 +460,14 @@ public class EntityCamel extends AbstractChestedHorseEntity {
     //hitbox
     @Override
     public float getRenderScale() {
-        return this.isChild() ? 0.95F : 1.9F;
+        return this.isChild() ? 0.75F : 1.85F;
+    }
+
+    protected void setOffspringAttributes(AgeableEntity ageable, AbstractHorseEntity abstaEntity) {
+        double d0 = this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() + ageable.getAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() + (double)this.getModifiedMaxHealth();
+        abstaEntity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(d0 / 2.0D);
+        double d2 = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + ageable.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + this.getModifiedMovementSpeed();
+        abstaEntity.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(d2 / 4.0D);
     }
 
 }

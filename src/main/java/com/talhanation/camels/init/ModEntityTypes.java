@@ -14,9 +14,11 @@ public class ModEntityTypes {
 
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Main.MOD_ID);
 
+
+
     public static final RegistryObject<EntityType<EntityCamel>> CAMEL_ENTITY = ENTITY_TYPES.register("camel", () -> EntityType.Builder.<EntityCamel>create(EntityCamel::new, EntityClassification.CREATURE)
-                            .size(1f, 1f)
-                            .build(new ResourceLocation(Main.MOD_ID,"camel").toString()));
+            .size(0.9f, 1.2f)
+            .build(new ResourceLocation(Main.MOD_ID,"camel").toString()));
 
 
     public static void addEntitySpawns() {

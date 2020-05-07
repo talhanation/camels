@@ -5,6 +5,7 @@ import com.talhanation.camels.init.ModEntityTypes;
 import com.talhanation.camels.init.SoundInit;
 import com.talhanation.camels.items.CamelSpawnEggItem;
 import com.talhanation.camels.items.ModItems;
+import com.talhanation.camels.network.ModServerPlayNetHandler;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -55,7 +56,7 @@ public class Main
 
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
-
+        //ModServerPlayNetHandler.
     }
 
     @OnlyIn(Dist.CLIENT)

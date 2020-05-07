@@ -7,7 +7,7 @@ loaderVersion="[31,)" #mandatory This is typically bumped every Minecraft versio
 
 modId="camels"
 
-version="1.0"
+version="0.8.0"
 
 displayName="Camel Mod"
 
@@ -15,12 +15,12 @@ displayURL="http://example.com/"
 
 logoFile="logo.png"
 
-credits="Thanks to talhanation"
+credits="talhanation"
 
 authors="talhanation"
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-This Mod adds vanilla friendly Camels into the game.
+This Mod adds vanilla friendly Camels into Minecraft.
 '''
 
 
