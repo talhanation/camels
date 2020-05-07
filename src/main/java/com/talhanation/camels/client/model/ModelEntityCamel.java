@@ -61,7 +61,7 @@ public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
 		leg_back_left.setTextureOffset(109, 37).addBox(-3.0F, 0.0F, -2.0F, 4.0F, 14.0F, 4.0F, 0.0F, false);
 
 		tail = new ModelRenderer(this);
-		tail.setRotationPoint(0.0F, -23.0F, 10.0F);
+		tail.setRotationPoint(0.0F, 0.0F, 0.0F);
 		body.addChild(tail);
 		tail.setTextureOffset(110, 22).addBox(-0.5F, 0.0F, 0.0F, 1.0F, 8.0F, 1.0F, 0.0F, false);
 
@@ -92,6 +92,7 @@ public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
 		boolean flag = !t.isChild() && t.hasChest();
 		this.chest_1.showModel = flag;
 		this.chest_2.showModel = flag;
+
 	}
 
 	@Override
@@ -117,6 +118,17 @@ public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
 	}
 	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
 		super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
+
+		boolean lvt_14_1_ = entity.tailCounter != 0;
+		float lvt_15_1_ = (float)entity.ticksExisted + partialTick;
+		this.tail.rotateAngleX = 0.5235988F + limbSwingAmount * 0.75F;
+		this.tail.rotationPointY = limbSwingAmount - 20F;
+		this.tail.rotationPointZ = limbSwingAmount + 9.5F;
+		if (lvt_14_1_) {
+			this.tail.rotateAngleY = MathHelper.cos(lvt_15_1_ * 0.7F);
+		} else {
+			this.tail.rotateAngleY = 0.0F;
+		}
 
 	}
 }

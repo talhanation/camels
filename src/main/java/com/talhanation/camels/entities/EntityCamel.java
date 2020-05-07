@@ -45,7 +45,7 @@ public class EntityCamel extends LlamaEntity {
     private static final DataParameter<Integer> DATA_STRENGTH_ID;
     private static final DataParameter<Integer> DATA_COLOR_ID;
     private static final DataParameter<Integer> DATA_VARIANT_ID;
-    private int tailCounter;
+    public int tailCounter;
     private int eatingCounter;
 
     @Nullable
@@ -425,6 +425,10 @@ public class EntityCamel extends LlamaEntity {
         }
     }
     public void livingTick() {
+        if (this.tailCounter > 0 && ++this.tailCounter > 8) {
+            this.tailCounter = 0;
+        }
+
         if (this.rand.nextInt(200) == 0) {
             this.moveTail();
         }
@@ -469,5 +473,7 @@ public class EntityCamel extends LlamaEntity {
         double d2 = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + ageable.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + this.getModifiedMovementSpeed();
         abstaEntity.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(d2 / 4.0D);
     }
+
+
 
 }
