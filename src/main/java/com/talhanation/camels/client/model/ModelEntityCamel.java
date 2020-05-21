@@ -119,13 +119,13 @@ public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
 	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
 		super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
 
-		boolean lvt_14_1_ = entity.tailCounter != 0;
-		float lvt_15_1_ = (float)entity.ticksExisted + partialTick;
+		boolean flag = entity.tailCounter != 0;
+		float x = (float)entity.ticksExisted + partialTick;
 		this.tail.rotateAngleX = 0.5235988F + limbSwingAmount * 0.75F;
 		this.tail.rotationPointY = limbSwingAmount - 20F;
 		this.tail.rotationPointZ = limbSwingAmount + 9.5F;
-		if (lvt_14_1_) {
-			this.tail.rotateAngleY = MathHelper.cos(lvt_15_1_ * 0.7F);
+		if (flag) {
+			this.tail.rotateAngleY = MathHelper.cos(x * 0.7F);
 		} else {
 			this.tail.rotateAngleY = 0.0F;
 		}
