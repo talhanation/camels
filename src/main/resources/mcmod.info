@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "camels",
+    "name": "Camels Mod",
+    "description": "Vanilla friendly Camels for Minecraft!",
+    "version": "1.0.0",
+    "mcversion": "1.12.2",
+    "url": "https://www.curseforge.com/minecraft/mc-mods/camels",
+    "updateurl": "",
+    "authorList": ["talhanation"],
+    "credits": "talhanation",
+    "logoFile": "logo.png",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
