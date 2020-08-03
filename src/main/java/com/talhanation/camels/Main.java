@@ -35,8 +35,8 @@ public class Main
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
         SoundInit.registerSounds();
-        EntityRegistry.addSpawn(EntityCamel.class, 2, 1, 5, EnumCreatureType.CREATURE, //
-                DESERT, DESERT_HILLS, SAVANNA, SAVANNA_PLATEAU);
+        EntityRegistry.addSpawn(EntityCamel.class, 2, 2, 5, EnumCreatureType.CREATURE, //
+                DESERT, SAVANNA, SAVANNA_PLATEAU);
     }
 
     @Mod.EventHandler

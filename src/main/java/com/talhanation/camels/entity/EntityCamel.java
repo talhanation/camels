@@ -65,7 +65,7 @@ public class EntityCamel  extends EntityLlama {
 
     private void setRandomStrength() {
         int x = this.rand.nextFloat() < 0.04F ? 5 : 3;
-        this.setStrength(3 + this.rand.nextInt(x));
+        this.setStrength(4 + this.rand.nextInt(x));
     }
 
     public int getStrength() {
@@ -108,8 +108,8 @@ public class EntityCamel  extends EntityLlama {
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(40.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.15F);
-        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(55.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.25F);
+        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
     }
 
     protected void entityInit() {
@@ -257,24 +257,33 @@ public class EntityCamel  extends EntityLlama {
     }
 
     protected SoundEvent getAngrySound() {
-        return this.isChild() ? SoundInit.ENTITY_CAMEL_ANGRY_BABY : SoundInit.ENTITY_CAMEL_ANGRY;
+        return SoundInit.ENTITY_CAMEL_ANGRY;
     }
     protected SoundEvent getAmbientSound() {
-        return this.isChild() ? SoundInit.ENTITY_CAMEL_AMBIENT_BABY : SoundInit.ENTITY_CAMEL_AMBIENT;
+        return SoundInit.ENTITY_CAMEL_AMBIENT;
     }
     protected SoundEvent getHurtSound(DamageSource damage) {
-        return this.isChild() ? SoundInit.ENTITY_CAMEL_HURT_BABY : SoundInit.ENTITY_CAMEL_HURT;
+        return SoundInit.ENTITY_CAMEL_HURT;
     }
     protected SoundEvent getDeathSound() {
-        return this.isChild() ? SoundInit.ENTITY_CAMEL_DEATH_BABY : SoundInit.ENTITY_CAMEL_DEATH;
+        return SoundInit.ENTITY_CAMEL_DEATH;
     }
-
 
     protected void playStepSound(BlockPos blockpos, Block blockState) {
         this.playSound(SoundEvents.ENTITY_PIG_STEP, 0.15F, 1.0F);
     }
     protected void playChestEquipSound() {
         this.playSound(SoundEvents.ENTITY_MULE_CHEST, 1.0F, (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
+    }
+    @Override
+    public void makeMad()
+    {
+        SoundEvent soundevent = this.getAngrySound();
+
+        if (soundevent != null)
+        {
+            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+        }
     }
 
     @Nullable
@@ -383,7 +392,7 @@ public class EntityCamel  extends EntityLlama {
 
     public void setAIMoveSpeed(float speed) {
         if (isBeingRidden()) {
-            super.setAIMoveSpeed(speed * 0.65F);
+            super.setAIMoveSpeed(speed * 1F);
         } else {
             super.setAIMoveSpeed(speed);
         }

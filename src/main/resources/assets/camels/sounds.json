@@ -52,54 +52,5 @@
         "stream":true
       }
     ]
-  },
-      "entity.camel.ambient.baby":{
-        "category": "entity",
-        "subtitle": "entity.camel.ambient.baby",
-        "sounds": [
-          {
-            "name": "camels:entity/camel/baby_ambient",
-            "stream":true
-          },
-          {
-            "name": "camels:entity/camel/baby_ambient_1",
-            "stream":true
-          }
-        ]
-      },
-
-      "entity.camel.hurt.baby":{
-        "category": "entity",
-        "subtitle": "entity.camel.hurt.baby",
-        "sounds": [
-          {
-            "name": "camels:entity/camel/baby_hurt",
-            "stream":true
-          },
-          {
-            "name": "camels:entity/camel/baby_hurt_1",
-            "stream":true
-          }
-        ]
-      },
-      "entity.camel.death.baby":{
-        "category": "entity",
-        "subtitle": "entity.camel.death.baby",
-        "sounds": [
-          {
-            "name": "camels:entity/camel/baby_death",
-            "stream":true
-          }
-        ]
-      },
-      "entity.camel.angry.baby":{
-        "category": "entity",
-        "subtitle": "entity.camel.angry.baby",
-        "sounds": [
-          {
-            "name": "camels:entity/camel/baby_angry",
-            "stream":true
-          }
-        ]
-      }
+  }
 }
