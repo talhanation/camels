@@ -5,11 +5,13 @@ import com.talhanation.camels.init.EntityInit;
 import com.talhanation.camels.init.SoundInit;
 import com.talhanation.camels.proxy.CommonProxy;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import static net.minecraft.init.Biomes.*;
@@ -29,8 +31,7 @@ public class Main
     public static void PreInit(FMLPreInitializationEvent event){
 
         EntityInit.registerEntities();
-        ModRenderHandler.registerEntityRenders();
-    }
+}
 
     @Mod.EventHandler
     public static void init(FMLInitializationEvent event) {
@@ -43,7 +44,5 @@ public class Main
     public static void PostInit(FMLPostInitializationEvent event){
 
     }
-
-
 
 }
