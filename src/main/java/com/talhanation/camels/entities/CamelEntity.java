@@ -3,6 +3,7 @@ package com.talhanation.camels.entities;
 import java.util.Iterator;
 import javax.annotation.Nullable;
 
+import com.talhanation.camels.entities.ai.goal.CamelFollowCaravanGoal;
 import com.talhanation.camels.init.ModEntityTypes;
 import com.talhanation.camels.init.SoundInit;
 import net.minecraft.block.Block;
@@ -19,7 +20,6 @@ import net.minecraft.entity.ai.goal.RunAroundLikeCrazyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.horse.AbstractChestedHorseEntity;
 import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -41,7 +41,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
-public class EntityCamel extends LlamaEntity {
+public class CamelEntity extends LlamaEntity {
     private static final DataParameter<Integer> DATA_STRENGTH_ID;
     private static final DataParameter<Integer> DATA_COLOR_ID;
     private static final DataParameter<Integer> DATA_VARIANT_ID;
@@ -49,11 +49,12 @@ public class EntityCamel extends LlamaEntity {
     private int eatingCounter;
 
     @Nullable
-    private EntityCamel caravanHead;
+    private CamelEntity caravanHead;
     @Nullable
-    private EntityCamel caravanTail;
+    private CamelEntity caravanTail;
 
-    public EntityCamel(EntityType<? extends EntityCamel> entity, World world) {
+    public CamelEntity(EntityType<? extends CamelEntity> entity, World world) {
+
         super(entity, world);
     }
 
@@ -95,7 +96,7 @@ public class EntityCamel extends LlamaEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new RunAroundLikeCrazyGoal(this, 1.2D));
-       // this.goalSelector.addGoal(2, new LlamaFollowCaravanGoal(this, 2.0999999046325684D));
+        this.goalSelector.addGoal(2, new CamelFollowCaravanGoal(this, 2.1D));
         this.goalSelector.addGoal(3, new PanicGoal(this, 1.2D));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.0D));
@@ -119,7 +120,7 @@ public class EntityCamel extends LlamaEntity {
     }
 
     public int getVariant() {
-        return MathHelper.clamp(this.dataManager.get(DATA_VARIANT_ID), 0, 3);
+        return MathHelper.clamp(this.dataManager.get(DATA_VARIANT_ID), 0, 4);
     }
 
     public void setVariant(int variant) {
@@ -127,7 +128,7 @@ public class EntityCamel extends LlamaEntity {
     }
 
     protected int getInventorySize() {
-        return this.hasChest() ? 2 + 3 * this.getInventoryColumns() : super.getInventorySize();
+        return this.hasChest() ? 2 + 5 * this.getInventoryColumns() : super.getInventorySize();
     }
     @Nullable
     public void updatePassenger(Entity entity) {
@@ -276,7 +277,7 @@ public class EntityCamel extends LlamaEntity {
         super.onInventoryChanged(inventory);
         DyeColor dye2 = this.getColor();
         if (this.ticksExisted > 20 && dye2 != null && dye2 != dye1) {
-            this.playSound(SoundEvents.ENTITY_LLAMA_SWAG, 0.5F, 1.0F);
+           // this.playSound(SoundEvents.ENTITY_LLAMA_SWAG, 0.5F, 1.0F);
         }
 
     }
@@ -309,14 +310,14 @@ public class EntityCamel extends LlamaEntity {
     }
 
     public boolean canMateWith(AnimalEntity animal) {
-        return animal != this && animal instanceof EntityCamel && this.canMate() && ((EntityCamel)animal).canMate();
+        return animal != this && animal instanceof CamelEntity && this.canMate() && ((CamelEntity)animal).canMate();
     }
 
     @Override
-    public EntityCamel createChild(AgeableEntity ageable) {
-        EntityCamel entity = this.createChild();
+    public CamelEntity createChild(AgeableEntity ageable) {
+        CamelEntity entity = this.createChild();
         this.setOffspringAttributes(ageable, entity);
-        EntityCamel entity1 = (EntityCamel)ageable;
+        CamelEntity entity1 = (CamelEntity)ageable;
         int i = this.rand.nextInt(Math.max(this.getStrength(), entity1.getStrength())) + 1;
         if (this.rand.nextFloat() < 0.03F) {
             ++i;
@@ -327,8 +328,8 @@ public class EntityCamel extends LlamaEntity {
         return entity;
     }
 
-    protected EntityCamel createChild() {
-        EntityCamel entity = new EntityCamel(ModEntityTypes.CAMEL_ENTITY.get(), this.world);
+    protected CamelEntity createChild() {
+        CamelEntity entity = new CamelEntity(ModEntityTypes.CAMEL_ENTITY.get(), this.world);
             entity.onInitialSpawn(this.world, this.world.getDifficultyForLocation(new BlockPos(entity)),
                     SpawnReason.BREEDING, (ILivingEntityData) null, (CompoundNBT) null);
              return entity;
@@ -364,7 +365,7 @@ public class EntityCamel extends LlamaEntity {
         this.caravanHead = null;
     }
 
-    public void joinCaravan(EntityCamel entity) {
+    public void joinCaravan(CamelEntity entity) {
         this.caravanHead = entity;
         this.caravanHead.caravanTail = this;
     }
@@ -378,12 +379,12 @@ public class EntityCamel extends LlamaEntity {
     }
 
     @Nullable
-    public EntityCamel getCaravanHead() {
+    public CamelEntity getCaravanHead() {
         return this.caravanHead;
     }
 
     protected double followLeashSpeed() {
-        return 1.0D;
+        return 1.5D;
     }
 
     protected void followMother() {
@@ -397,21 +398,20 @@ public class EntityCamel extends LlamaEntity {
         return true;
     }
 
-
     static {
-        DATA_STRENGTH_ID = EntityDataManager.createKey(EntityCamel.class, DataSerializers.VARINT);
-        DATA_COLOR_ID = EntityDataManager.createKey(EntityCamel.class, DataSerializers.VARINT);
-        DATA_VARIANT_ID = EntityDataManager.createKey(EntityCamel.class, DataSerializers.VARINT);
+        DATA_STRENGTH_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
+        DATA_COLOR_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
+        DATA_VARIANT_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
     }
 
     static class HurtByTargetGoal extends net.minecraft.entity.ai.goal.HurtByTargetGoal {
-        public HurtByTargetGoal(EntityCamel entity) {
-            super(entity, new Class[0]);
-        }
+            public HurtByTargetGoal(CamelEntity entity) {
+                super(entity, new Class[0]);
+            }
 
         public boolean shouldContinueExecuting() {
-            if (this.goalOwner instanceof EntityCamel) {
-                EntityCamel entity = (EntityCamel)this.goalOwner;
+            if (this.goalOwner instanceof CamelEntity) {
+                CamelEntity entity = (CamelEntity)this.goalOwner;
             }
             return super.shouldContinueExecuting();
         }
@@ -473,7 +473,5 @@ public class EntityCamel extends LlamaEntity {
         double d2 = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + ageable.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + this.getModifiedMovementSpeed();
         abstaEntity.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(d2 / 4.0D);
     }
-
-
 
 }

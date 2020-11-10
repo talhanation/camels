@@ -3,12 +3,12 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
-import com.talhanation.camels.entities.EntityCamel;
+import com.talhanation.camels.entities.CamelEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.MathHelper;
 
-public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
+public class  ModelEntityCamel<T extends CamelEntity> extends EntityModel<T> {
 	private final ModelRenderer body;
 	private final ModelRenderer chest_1;
 	private final ModelRenderer chest_2;
@@ -81,15 +81,21 @@ public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
 	}
 
 	@Override
-	public void setRotationAngles(T t, float v, float v1, float v2, float v3, float v4) {
-		this.head.rotateAngleX = v4 * 0.0125F;
-		this.head.rotateAngleY = v3 * 0.0125F;
+	public void setRotationAngles(T camel, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+		if (camel.isBeingRidden() && camel.isHorseSaddled()){
+			this.head.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 0.05F * limbSwingAmount;
+			this.head.rotateAngleY = 0;
+		}else {
+			this.head.rotateAngleX = headPitch * 0.0125F;
+			this.head.rotateAngleY = netHeadYaw * 0.0125F;
+		}
+
 		this.body.rotateAngleX = 0;
-		this.leg_front_right.rotateAngleX = MathHelper.cos(v * 0.6662F) * 0.6F * v1;
-		this.leg_front_left.rotateAngleX = MathHelper.cos(v * 0.6662F + 3.1415927F) * 0.6F * v1;
-		this.leg_back_right.rotateAngleX = MathHelper.cos(v * 0.6662F + 3.1415927F) * 0.6F * v1;
-		this.leg_back_left.rotateAngleX = MathHelper.cos(v * 0.6662F) * 0.6F * v1;
-		boolean flag = !t.isChild() && t.hasChest();
+		this.leg_front_right.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 0.6F * limbSwingAmount;
+		this.leg_front_left.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.1415927F) * 0.6F * limbSwingAmount;
+		this.leg_back_right.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.1415927F) * 0.6F * limbSwingAmount;
+		this.leg_back_left.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 0.6F * limbSwingAmount;
+		boolean flag = !camel.isChild() && camel.hasChest();
 		this.chest_1.showModel = flag;
 		this.chest_2.showModel = flag;
 
@@ -116,11 +122,11 @@ public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
 			matrixStack.pop();
 		}
 	}
-	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick) {
-		super.setLivingAnimations(entity, limbSwing, limbSwingAmount, partialTick);
+	public void setLivingAnimations(T camel, float limbSwing, float limbSwingAmount, float partialTick) {
+		super.setLivingAnimations(camel, limbSwing, limbSwingAmount, partialTick);
 
-		boolean flag = entity.tailCounter != 0;
-		float x = (float)entity.ticksExisted + partialTick;
+		boolean flag = camel.tailCounter != 0;
+		float x = (float)camel.ticksExisted + partialTick;
 		this.tail.rotateAngleX = 0.5235988F + limbSwingAmount * 0.75F;
 		this.tail.rotationPointY = limbSwingAmount - 20F;
 		this.tail.rotationPointZ = limbSwingAmount + 9.5F;
@@ -130,5 +136,7 @@ public class  ModelEntityCamel<T extends EntityCamel> extends EntityModel<T> {
 			this.tail.rotateAngleY = 0.0F;
 		}
 
+
 	}
+
 }

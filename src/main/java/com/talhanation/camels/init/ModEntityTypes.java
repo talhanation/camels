@@ -1,7 +1,7 @@
 package com.talhanation.camels.init;
 
 import com.talhanation.camels.Main;
-import com.talhanation.camels.entities.EntityCamel;
+import com.talhanation.camels.entities.CamelEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
@@ -16,7 +16,7 @@ public class ModEntityTypes {
 
 
 
-    public static final RegistryObject<EntityType<EntityCamel>> CAMEL_ENTITY = ENTITY_TYPES.register("camel", () -> EntityType.Builder.<EntityCamel>create(EntityCamel::new, EntityClassification.CREATURE)
+    public static final RegistryObject<EntityType<CamelEntity>> CAMEL_ENTITY = ENTITY_TYPES.register("camel", () -> EntityType.Builder.<CamelEntity>create(CamelEntity::new, EntityClassification.CREATURE)
             .size(0.9f, 1.2f)
             .build(new ResourceLocation(Main.MOD_ID,"camel").toString()));
 
