@@ -1,18 +1,13 @@
 package com.talhanation.camels;
 
-import com.talhanation.camels.client.model.ModelEntityCamel;
 import com.talhanation.camels.init.ModEntityTypes;
 import com.talhanation.camels.init.SoundInit;
 import com.talhanation.camels.items.CamelSpawnEggItem;
 import com.talhanation.camels.items.ModItems;
-import com.talhanation.camels.network.ModServerPlayNetHandler;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
@@ -25,8 +20,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
 
 @Mod("camels")
 public class Main
