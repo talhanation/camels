@@ -29,7 +29,6 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -56,18 +55,28 @@ public class CamelEntity extends LlamaEntity {
     @Nullable
     private CamelEntity caravanTail;
 
+    @Override
+    protected void func_230273_eI_() {
+        this.getAttribute(Attributes.MAX_HEALTH).setBaseValue((double)this.getModifiedMaxHealth());
+
+    }
+    @Override
+    protected float getModifiedMaxHealth() {
+        return 25.0F + (float)this.rand.nextInt(8) + (float)this.rand.nextInt(9);
+    }
+
     public CamelEntity(EntityType<? extends CamelEntity> type, World world) {
 
         super(type,world);
     }
 
     private void setStrength(int x) {
-        this.dataManager.set(DATA_STRENGTH_ID, Math.max(1, Math.min(10, x)));
+        this.dataManager.set(DATA_STRENGTH_ID, Math.max(2, Math.min(10, x)));
     }
 
     private void setRandomStrength() {
         int x = this.rand.nextFloat() < 0.04F ? 5 : 3;
-        this.setStrength(3 + this.rand.nextInt(x));
+        this.setStrength(5 + this.rand.nextInt(x));
     }
 
     public int getStrength() {
@@ -99,7 +108,7 @@ public class CamelEntity extends LlamaEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new RunAroundLikeCrazyGoal(this, 1.2D));
-        this.goalSelector.addGoal(2, new CamelFollowCaravanGoal(this, 2.1D));
+        this.goalSelector.addGoal(2, new CamelFollowCaravanGoal(this, 4.1D));
         this.goalSelector.addGoal(3, new PanicGoal(this, 1.2D));
         this.goalSelector.addGoal(4, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.0D));
@@ -110,11 +119,10 @@ public class CamelEntity extends LlamaEntity {
 
     public static AttributeModifierMap.MutableAttribute setCustomAttributes() {
         return MobEntity.func_233666_p_()
-                .createMutableAttribute(Attributes.MAX_HEALTH, 30)
+                .createMutableAttribute(Attributes.MAX_HEALTH, 30.0F)
                 .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.1F)
                 .createMutableAttribute(Attributes.FOLLOW_RANGE, 40.00F)
                 .createMutableAttribute(Attributes.HORSE_JUMP_STRENGTH, 0.33F);
-
     }
 
     protected void registerData() {
@@ -429,19 +437,6 @@ public class CamelEntity extends LlamaEntity {
     }
 
 
-    static class HurtByTargetGoal extends net.minecraft.entity.ai.goal.HurtByTargetGoal {
-            public HurtByTargetGoal(CamelEntity entity) {
-                super(entity, new Class[0]);
-            }
-
-        public boolean shouldContinueExecuting() {
-            if (this.goalOwner instanceof CamelEntity) {
-                CamelEntity entity = (CamelEntity)this.goalOwner;
-            }
-            return super.shouldContinueExecuting();
-        }
-    }
-
     static class CamelData extends AgeableData {
         public final int variant;
 
@@ -474,7 +469,7 @@ public class CamelEntity extends LlamaEntity {
 
     @Override
     protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
-        return sizeIn.height * 1.75F;
+        return sizeIn.height * 1.3F;
     }
     //hitbox
     @Override
