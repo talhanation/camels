@@ -13,7 +13,7 @@ import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class ModItems {
-        public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, Main.MOD_ID);
+        public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, Main.MOD_ID);
         public static final List<RegistryObject<Item>> SPAWN_EGGS = Lists.newArrayList();
 
     public static final RegistryObject<Item> CAMEL_SPAWN_EGG = RegistryUtils.createSpawnEggItem("camel", () -> ModEntityTypes.CAMEL_ENTITY.get(), 16755200, 16777045);

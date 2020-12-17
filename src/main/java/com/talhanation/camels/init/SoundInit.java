@@ -10,7 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class SoundInit {
 
-    public static final DeferredRegister<SoundEvent> SOUNDS = new DeferredRegister<>(ForgeRegistries.SOUND_EVENTS, Main.MOD_ID);
+    public static final DeferredRegister<SoundEvent> SOUNDS =  DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, Main.MOD_ID);
 
     public static final RegistryObject<SoundEvent> ENTITY_CAMEL_AMBIENT = SOUNDS.register("entity.camel.ambient",
             () -> new SoundEvent(new ResourceLocation(Main.MOD_ID,"entity.camel.ambient")));

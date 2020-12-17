@@ -1,15 +1,18 @@
 package com.talhanation.camels;
 
+import com.talhanation.camels.entities.CamelEntity;
 import com.talhanation.camels.init.ModEntityTypes;
 import com.talhanation.camels.init.SoundInit;
 import com.talhanation.camels.items.CamelSpawnEggItem;
 import com.talhanation.camels.items.ModItems;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -40,6 +43,10 @@ public class Main
     }
 
     private void setup(final FMLCommonSetupEvent event) {
+        DeferredWorkQueue.runLater(() -> {
+            GlobalEntityTypeAttributes.put(ModEntityTypes.CAMEL_ENTITY.get(), CamelEntity.setCustomAttributes().create());
+                });
+
         ModEntityTypes.addEntitySpawns();
     }
 

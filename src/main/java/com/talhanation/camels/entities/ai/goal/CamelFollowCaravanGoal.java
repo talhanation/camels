@@ -4,7 +4,7 @@ import java.util.EnumSet;
 import com.talhanation.camels.init.ModEntityTypes;
 import com.talhanation.camels.entities.CamelEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 
 public class CamelFollowCaravanGoal extends Goal {
     private CamelEntity camel;
@@ -93,7 +93,7 @@ public class CamelFollowCaravanGoal extends Goal {
         if (this.camel.inCaravan()) {
             CamelEntity caravanLeader = this.camel.getCaravanHead();
             double distance = this.camel.getDistance((net.minecraft.entity.Entity)java.util.Objects.requireNonNull(caravanLeader));
-            Vec3d vec3d = new Vec3d(caravanLeader.getPosX() - this.camel.getPosX(), caravanLeader.getPosY() - this.camel.getPosY(), caravanLeader.getPosZ() - this.camel.getPosZ()).normalize().scale(Math.max(distance - 2.0D, 0.0D));
+            Vector3d vec3d = new Vector3d(caravanLeader.getPosX() - this.camel.getPosX(), caravanLeader.getPosY() - this.camel.getPosY(), caravanLeader.getPosZ() - this.camel.getPosZ()).normalize().scale(Math.max(distance - 2.0D, 0.0D));
             this.camel.getNavigator().tryMoveToXYZ(this.camel.getPosX() + vec3d.x, this.camel.getPosY() + vec3d.y, this.camel.getPosZ() + vec3d.z, this.speedModifier);
         }
     }

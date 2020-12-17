@@ -11,6 +11,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CarpetBlock;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.BreedGoal;
 import net.minecraft.entity.ai.goal.FollowParentGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -20,7 +22,6 @@ import net.minecraft.entity.ai.goal.RunAroundLikeCrazyGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
 import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.horse.AbstractHorseEntity;
 import net.minecraft.entity.passive.horse.LlamaEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
@@ -28,6 +29,7 @@ import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -38,29 +40,29 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 
 public class CamelEntity extends LlamaEntity {
-    private static final DataParameter<Integer> DATA_STRENGTH_ID;
-    private static final DataParameter<Integer> DATA_COLOR_ID;
-    private static final DataParameter<Integer> DATA_VARIANT_ID;
+
+    private static final DataParameter<Integer> DATA_STRENGTH_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> DATA_COLOR_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> DATA_VARIANT_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
     public int tailCounter;
-    private int eatingCounter;
 
     @Nullable
     private CamelEntity caravanHead;
     @Nullable
     private CamelEntity caravanTail;
 
-    public CamelEntity(EntityType<? extends CamelEntity> entity, World world) {
+    public CamelEntity(EntityType<? extends CamelEntity> type, World world) {
 
-        super(entity, world);
+        super(type,world);
     }
 
-
     private void setStrength(int x) {
-        this.dataManager.set(DATA_STRENGTH_ID, Math.max(1, Math.min(5, x)));
+        this.dataManager.set(DATA_STRENGTH_ID, Math.max(1, Math.min(10, x)));
     }
 
     private void setRandomStrength() {
@@ -90,7 +92,8 @@ public class CamelEntity extends LlamaEntity {
             this.horseChest.setInventorySlotContents(1, ItemStack.read(comnbt.getCompound("DecorItem")));
         }
 
-        this.updateHorseSlots();
+       // this.updateHorseSlots();
+        this.func_230275_fc_();
     }
 
     protected void registerGoals() {
@@ -105,11 +108,13 @@ public class CamelEntity extends LlamaEntity {
         this.goalSelector.addGoal(8, new LookRandomlyGoal(this));
     }
 
-    protected void registerAttributes() {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(40.0D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.15F);
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(55.0D);
+    public static AttributeModifierMap.MutableAttribute setCustomAttributes() {
+        return MobEntity.func_233666_p_()
+                .createMutableAttribute(Attributes.MAX_HEALTH, 30)
+                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.1F)
+                .createMutableAttribute(Attributes.FOLLOW_RANGE, 40.00F)
+                .createMutableAttribute(Attributes.HORSE_JUMP_STRENGTH, 0.33F);
+
     }
 
     protected void registerData() {
@@ -148,7 +153,19 @@ public class CamelEntity extends LlamaEntity {
         return true;
     }
 
-    @Nullable
+    public ActionResultType func_241395_b_(PlayerEntity p_241395_1_, ItemStack p_241395_2_) {
+        boolean flag = this.handleEating(p_241395_1_, p_241395_2_);
+        if (!p_241395_1_.abilities.isCreativeMode) {
+            p_241395_2_.shrink(1);
+        }
+
+        if (this.world.isRemote) {
+            return ActionResultType.CONSUME;
+        } else {
+            return flag ? ActionResultType.SUCCESS : ActionResultType.PASS;
+        }
+    }
+    @Override
     protected boolean handleEating(PlayerEntity player, ItemStack stack) {
         boolean flag = false;
         float f = 0.0F;
@@ -166,6 +183,10 @@ public class CamelEntity extends LlamaEntity {
         } else if (item == Blocks.HAY_BLOCK.asItem()) {
             f = 20.0F;
             i = 180;
+            if (this.isTame() && this.getGrowingAge() == 0 && this.canBreed()) {
+                flag = true;
+                this.setInLove(player);
+            }
         } else if (item == Items.APPLE) {
             f = 3.0F;
             i = 60;
@@ -174,7 +195,7 @@ public class CamelEntity extends LlamaEntity {
             f = 4.0F;
             i = 60;
             j = 5;
-            if (this.isTame() && this.getGrowingAge() == 0 && !this.isInLove()) {
+            if (this.isTame() && this.getGrowingAge() == 0 && this.canBreed()) {
                 flag = true;
                 this.setInLove(player);
             }
@@ -182,7 +203,7 @@ public class CamelEntity extends LlamaEntity {
             f = 10.0F;
             i = 240;
             j = 10;
-            if (this.isTame() && this.getGrowingAge() == 0 && !this.isInLove()) {
+            if (this.isTame() && this.getGrowingAge() == 0 && this.canBreed()) {
                 flag = true;
                 this.setInLove(player);
             }
@@ -209,7 +230,10 @@ public class CamelEntity extends LlamaEntity {
             }
         }
         if (flag && !this.isSilent()) {
-            this.world.playSound((PlayerEntity)null, this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_LLAMA_EAT, this.getSoundCategory(), 1.0F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
+            SoundEvent soundevent = this.func_230274_fe_();
+            if (soundevent != null) {
+                this.world.playSound((PlayerEntity)null, this.getPosX(), this.getPosY(), this.getPosZ(), this.func_230274_fe_(), this.getSoundCategory(), 1.0F, 1.0F + (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
+            }
         }
         return flag;
 
@@ -220,7 +244,7 @@ public class CamelEntity extends LlamaEntity {
     }
 
     @Nullable
-    public ILivingEntityData onInitialSpawn(IWorld world, DifficultyInstance diff, SpawnReason spawn, @Nullable ILivingEntityData data, @Nullable CompoundNBT comnbt) {
+    public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance diff, SpawnReason spawn, @Nullable ILivingEntityData data, @Nullable CompoundNBT comnbt) {
         this.setRandomStrength();
         int x;
         if (data instanceof CamelData) {
@@ -259,18 +283,22 @@ public class CamelEntity extends LlamaEntity {
         return this.getStrength();
     }
 
-    public boolean wearsArmor() {
+   // public boolean wearsArmor() {return true;}
+    public boolean func_230276_fq_() {
         return true;
     }
+
 
     public boolean isArmor(ItemStack itemStack) {
         Item item = itemStack.getItem();
         return ItemTags.CARPETS.contains(item);
     }
 
-    public boolean canBeSaddled() {
+    //public boolean canBeSaddled() {return true;}
+    public boolean func_230264_L__() {
         return true;
     }
+
 
     public void onInventoryChanged(IInventory inventory) {
         DyeColor dye1 = this.getColor();
@@ -282,9 +310,15 @@ public class CamelEntity extends LlamaEntity {
 
     }
 
-    protected void updateHorseSlots() {
+    /*protected void updateHorseSlots() {
         if (!this.world.isRemote) {
             super.updateHorseSlots();
+            this.setColor(getCarpetColor(this.horseChest.getStackInSlot(1)));
+        }
+    }*/
+    protected void func_230275_fc_() {
+        if (!this.world.isRemote) {
+            super.func_230275_fc_();
             this.setColor(getCarpetColor(this.horseChest.getStackInSlot(1)));
         }
     }
@@ -314,48 +348,44 @@ public class CamelEntity extends LlamaEntity {
     }
 
     @Override
-    public CamelEntity createChild(AgeableEntity ageable) {
-        CamelEntity entity = this.createChild();
-        this.setOffspringAttributes(ageable, entity);
-        CamelEntity entity1 = (CamelEntity)ageable;
-        int i = this.rand.nextInt(Math.max(this.getStrength(), entity1.getStrength())) + 1;
+    public CamelEntity func_241840_a(ServerWorld serverWorld, AgeableEntity parent ) {
+        CamelEntity camelEntity = this.createChild();
+        this.setOffspringAttributes(parent, camelEntity);
+        CamelEntity camelEntity1 = (CamelEntity)parent;
+        int i = this.rand.nextInt(Math.max(this.getStrength(), camelEntity1.getStrength())) + 1;
         if (this.rand.nextFloat() < 0.03F) {
             ++i;
         }
-
-        entity.setStrength(i);
-        entity.setVariant(this.rand.nextBoolean() ? this.getVariant() : entity1.getVariant());
-        return entity;
+        camelEntity.setStrength(i);
+        camelEntity.setVariant(this.rand.nextBoolean() ? this.getVariant() : camelEntity1.getVariant());
+        return camelEntity;
     }
 
     protected CamelEntity createChild() {
-        CamelEntity entity = new CamelEntity(ModEntityTypes.CAMEL_ENTITY.get(), this.world);
-            entity.onInitialSpawn(this.world, this.world.getDifficultyForLocation(new BlockPos(entity)),
-                    SpawnReason.BREEDING, (ILivingEntityData) null, (CompoundNBT) null);
-             return entity;
+        return ModEntityTypes.CAMEL_ENTITY.get().create(this.world);
     }
 
-    public boolean onLivingFall(float x, float y) {
-        int z = this.func_225508_e_(x, y);
-        if (z <= 0) {
-            return false;
-        } else {
-            if (x >= 6.0F) {
-                this.attackEntityFrom(DamageSource.FALL, (float)z);
-                if (this.isBeingRidden()) {
-                    Iterator var4 = this.getRecursivePassengers().iterator();
+        public boolean onLivingFall(float x, float y) {
+            int z = this.calculateFallDamage(x, y);
+            if (z <= 0) {
+                return false;
+            } else {
+                if (x >= 6.0F) {
+                    this.attackEntityFrom(DamageSource.FALL, (float)z);
+                    if (this.isBeingRidden()) {
+                        Iterator var4 = this.getRecursivePassengers().iterator();
 
-                    while(var4.hasNext()) {
-                        Entity entity = (Entity)var4.next();
-                        entity.attackEntityFrom(DamageSource.FALL, (float)z);
+                        while(var4.hasNext()) {
+                            Entity entity = (Entity)var4.next();
+                            entity.attackEntityFrom(DamageSource.FALL, (float)z);
+                        }
                     }
                 }
-            }
 
-            this.playFallSound();
-            return true;
+                this.playFallSound();
+                return true;
+            }
         }
-    }
 
     public void leaveCaravan() {
         if (this.caravanHead != null) {
@@ -395,14 +425,9 @@ public class CamelEntity extends LlamaEntity {
     }
 
     public boolean canEatGrass() {
-        return true;
+        return false;
     }
 
-    static {
-        DATA_STRENGTH_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
-        DATA_COLOR_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
-        DATA_VARIANT_ID = EntityDataManager.createKey(CamelEntity.class, DataSerializers.VARINT);
-    }
 
     static class HurtByTargetGoal extends net.minecraft.entity.ai.goal.HurtByTargetGoal {
             public HurtByTargetGoal(CamelEntity entity) {
@@ -421,6 +446,7 @@ public class CamelEntity extends LlamaEntity {
         public final int variant;
 
         private CamelData(int x) {
+            super(true);
             this.variant = x;
         }
     }
@@ -439,17 +465,6 @@ public class CamelEntity extends LlamaEntity {
                 this.heal(1.0F);
             }
 
-            if (this.canEatGrass()) {
-                if (!this.isEatingHaystack() && !this.isBeingRidden() && this.rand.nextInt(300) == 0 && this.world.getBlockState((new BlockPos(this)).down()).getBlock() == Blocks.GRASS_BLOCK) {
-                    this.setEatingHaystack(true);
-                }
-
-                if (this.isEatingHaystack() && ++this.eatingCounter > 50) {
-                    this.eatingCounter = 0;
-                    this.setEatingHaystack(false);
-                }
-            }
-
             this.followMother();
         }
     }
@@ -465,13 +480,6 @@ public class CamelEntity extends LlamaEntity {
     @Override
     public float getRenderScale() {
         return this.isChild() ? 0.75F : 1.85F;
-    }
-
-    protected void setOffspringAttributes(AgeableEntity ageable, AbstractHorseEntity abstaEntity) {
-        double d0 = this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() + ageable.getAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue() + (double)this.getModifiedMaxHealth();
-        abstaEntity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(d0 / 2.0D);
-        double d2 = this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + ageable.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getBaseValue() + this.getModifiedMovementSpeed();
-        abstaEntity.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(d2 / 4.0D);
     }
 
 }

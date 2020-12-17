@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class ModEntityTypes {
 
-    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = new DeferredRegister<>(ForgeRegistries.ENTITIES, Main.MOD_ID);
+    public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITIES, Main.MOD_ID);
 
 
 
@@ -28,7 +28,7 @@ public class ModEntityTypes {
 
     private static void processSpawning(Biome biome) {
         if(biome.getCategory() == Biome.Category.DESERT) {
-            biome.getSpawns(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(ModEntityTypes.CAMEL_ENTITY.get(), 1, 2, 4));//x= y=min z=max
+          //  biome.(EntityClassification.CREATURE).add(new Biome.SpawnListEntry(ModEntityTypes.CAMEL_ENTITY.get(), 1, 2, 4));//x= y=min z=max
         }
     }
 }

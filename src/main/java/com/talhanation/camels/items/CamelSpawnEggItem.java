@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 import java.util.function.Supplier;
 
 public class CamelSpawnEggItem  extends SpawnEggItem {
+
     private Supplier<EntityType<?>> entityType;
 
     public CamelSpawnEggItem(Supplier<EntityType<?>> entityType, int primaryColor, int secondaryColor, Properties properties){
