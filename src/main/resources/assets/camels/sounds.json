@@ -2,7 +2,7 @@
 
   "entity.camel.ambient":{
     "category": "entity",
-    "subtitle": "entity.camel.ambient",
+    "subtitle": "Camel grunts",
     "sounds": [
       {
         "name": "camels:entity/entity.camel.ambient",
@@ -16,7 +16,7 @@
   },
   "entity.camel.hurt":{
     "category": "entity",
-    "subtitle": "entity.camel.hurt",
+    "subtitle": "Camel hurts",
     "sounds": [
       {
         "name": "camels:entity/entity.camel.hurt",
@@ -35,7 +35,7 @@
   },
   "entity.camel.death":{
     "category": "entity",
-    "subtitle": "entity.camel.death",
+    "subtitle": "Camel dies",
     "sounds": [
       {
         "name": "camels:entity/entity.camel.death",
@@ -45,7 +45,7 @@
   },
   "entity.camel.angry":{
     "category": "entity",
-    "subtitle": "entity.camel.angry",
+    "subtitle": "Camel grunts angrily",
     "sounds": [
       {
         "name": "camels:entity/entity.camel.angry",
@@ -55,7 +55,7 @@
   },
       "entity.camel.ambient.baby":{
         "category": "entity",
-        "subtitle": "entity.camel.ambient.baby",
+        "subtitle": "Camel grunts",
         "sounds": [
           {
             "name": "camels:entity/entity.camel.ambient.baby",
@@ -70,7 +70,7 @@
 
       "entity.camel.hurt.baby":{
         "category": "entity",
-        "subtitle": "entity.camel.hurt.baby",
+        "subtitle": "Camel hurts",
         "sounds": [
           {
             "name": "camels:entity/entity.camel.hurt.baby",
@@ -84,7 +84,7 @@
       },
       "entity.camel.death.baby":{
         "category": "entity",
-        "subtitle": "entity.camel.death.baby",
+        "subtitle": "Camel dies",
         "sounds": [
           {
             "name": "camels:entity/entity.camel.death.baby",
@@ -94,7 +94,7 @@
       },
       "entity.camel.angry.baby":{
         "category": "entity",
-        "subtitle": "entity.camel.angry.baby",
+        "subtitle": "Camel grunts angrily",
         "sounds": [
           {
             "name": "camels:entity/entity.camel.angry.baby",
