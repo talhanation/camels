@@ -13,10 +13,10 @@ import net.minecraft.world.level.ServerLevelAccessor;
 
 import javax.annotation.Nullable;
 
-public class CamelEntity extends AbstractCamelEntity{
+public class DromedaryEntity extends AbstractCamelEntity{
 
 
-    public CamelEntity(EntityType<? extends AbstractChestedHorse> type, Level level) {
+    public DromedaryEntity(EntityType<? extends AbstractChestedHorse> type, Level level) {
         super(type, level);
     }
 
@@ -42,6 +42,4 @@ public class CamelEntity extends AbstractCamelEntity{
         this.setVariant(random.nextInt(3));
         this.randomizeAttributes();
     }
-
-
 }
